@@ -14,11 +14,6 @@ from pytorch3d.transforms import (
     quaternion_to_matrix
 )
 
-from ProposalNetwork.proposals.proposals import propose
-from ProposalNetwork.utils.conversions import cube_to_box
-from ProposalNetwork.utils.spaces import Cubes
-from ProposalNetwork.utils.utils import iou_3d
-
 ROI_CUBE_HEAD_REGISTRY = Registry("ROI_CUBE_HEAD")
 
 @ROI_CUBE_HEAD_REGISTRY.register()
@@ -200,44 +195,3 @@ class CubeHead(nn.Module):
             box_z = box_z.view(n, self.num_classes, -1)
             
         return box_2d_deltas, box_z, box_dims, box_pose, box_uncert
-    
-
-@ROI_CUBE_HEAD_REGISTRY.register()
-class ScoreHead(nn.Module):
-    '''This is called a multi-task learning problem as it involves performing two tasks — 
-    
-        1) regression to find the score for a cube, 
-        2) regression to find the Cube coordinates
-        
-        
-        The cube head in the cube-rcnn model has 2 fc layers and then 1 extra layer for each type of output (z, rotation etc.). Therefore, we have chose to do the same'''
-    def __init__(self,  cfg, input_shape: Dict[str, ShapeSpec]):
-        super().__init__()
-        in_features = input_shape.height * input_shape.width * input_shape.channels
-        base_out = 64
-        self.mlp = nn.Sequential(
-            nn.Linear(in_features, 256),
-            nn.ReLU(),
-            nn.Linear(256, 128),
-            nn.BatchNorm1d(128), # I think the model could perhaps be better if this was a Dropout layer
-            nn.ReLU(),
-            nn.Linear(128, base_out),
-            nn.ReLU(),
-        )
-        self.fc_cube_centers, self.fc_dims = nn.Linear(base_out, 3), nn.Linear(base_out, 3) # center
-        # following the Cube-RCNN method we also predict 6d rotation.
-        self.rotation_6d = nn.Linear(base_out, 6)
-        
-        
-    def forward(self, x):
-        x = self.mlp(x)
-        centers, dims = self.fc_cube_centers(x), self.fc_dims(x)
-        centers_tmp = torch.exp(centers[:,2].clip(max=5))
-        centers = torch.cat((centers[:,:2],centers_tmp.unsqueeze(1)),axis=1)
-        dims = torch.exp(dims.clip(max=5))
-        x_cubes = Cubes(torch.cat((centers, dims, rotation_6d_to_matrix(self.rotation_6d(x)).view(-1,9)), 1))
-        return x_cubes
-
-def build_cube_head(cfg, input_shape: Dict[str, ShapeSpec]):
-    name = cfg.MODEL.ROI_CUBE_HEAD.NAME
-    return ROI_CUBE_HEAD_REGISTRY.get(name)(cfg, input_shape)

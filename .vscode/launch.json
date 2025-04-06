@@ -51,24 +51,6 @@
             "args": ["--config-file", "configs/Base_Omni3D.yaml", "--input-folder", "datasets/title", "--threshold", "0.25", "MODEL.WEIGHTS", "output/omni_pseudo_gt/model_final.pth", "OUTPUT_DIR", "output/demo_pseudogt"]
         },
         {
-            "name": "Proposal Demo",
-            "type": "python",
-            "request": "launch",
-            "program": "demo/demo.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--config-file", "configs/BoxNet.yaml", "--input-folder", "datasets/coco_examples", "--threshold", "0.10", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth", "OUTPUT_DIR", "output/demo_proposals"]
-        },
-        {
-            "name": "Learned Demo",
-            "type": "python",
-            "request": "launch",
-            "program": "demo/demo.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--config-file", "configs/Omni_combined.yaml", "--input-folder", "datasets/title", "--threshold", "0.25", "MODEL.WEIGHTS", "output/exp_10_iou_zpseudogt_dims_depthrange_rotalign_ground/model_recent.pth", "OUTPUT_DIR", "output/demo_learned"]
-        },
-        {
             "name": "train",
             "type": "python",
             "request": "launch",
@@ -103,78 +85,6 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": ["--eval-only", "--config-file", "configs/Base_Omni3D.yaml", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth"]
-        },
-        {
-            "name": "BoxNet MABO GT",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--eval-only", "--config-file" ,"configs/BoxNet.yaml", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth", "PLOT.EVAL", "MABO", "PLOT.MODE2D", "GT", "PLOT.PROPOSAL_FUNC", "z", "PLOT.SCORING_FUNC", "False"]
-        },
-        {
-            "name": "BoxNet MABO PRED",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--eval-only", "--config-file", "configs/BoxNet.yaml", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth", "PLOT.EVAL", "MABO", "PLOT.MODE2D", "PRED"]
-        },
-        {
-            "name": "BoxNet IoU3D GT",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--eval-only", "--config-file" ,"configs/BoxNet.yaml", "PLOT.EVAL", "IoU3D", "PLOT.MODE2D", "GT", "PLOT.PROPOSAL_FUNC", "['random', 'z', 'xy', 'dim', 'rotation', 'aspect' ,'full']", "PLOT.SCORING_FUNC", "False"]
-        },
-        {
-            "name": "BoxNet PRED AP DETECTION RATE",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--eval-only", "--config-file", "configs/BoxNet.yaml", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth", "PLOT.EVAL", "AP", "PLOT.MODE2D", "PRED"]
-        },
-        {
-            "name": "BoxNet AP PRED",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--eval-only", "--config-file", "configs/BoxNet.yaml", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth", "PLOT.EVAL", "AP", "PLOT.MODE2D", "PRED", "PLOT.SCORING_FUNC", "True"]
-        },
-        {
-            "name": "BoxNet AP GT",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--eval-only", "--config-file", "configs/BoxNet.yaml", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth", "PLOT.EVAL", "AP", "PLOT.MODE2D", "GT"]
-        },
-        {
-            "name": "BoxNet MABO GT Proposal aspect",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--eval-only", "--config-file", "configs/BoxNet.yaml", "MODEL.WEIGHTS", "output/Baseline_sgd/model_final.pth", "PLOT.EVAL", "MABO", "PLOT.MODE2D", "GT", "PLOT.PROPOSAL_FUNC", "aspect", "OUTPUT_DIR", "output/aspect"]
-        },
-        {
-            "name": "BoxNet generate pseudo GT",
-            "type": "python",
-            "request": "launch",
-            "program": "tools/eval_boxes.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--config-file", "configs/BoxNet.yaml", "OUTPUT_DIR", "output/BoxNet_gt", "TRAIN.pseudo_gt", "learn"]
         },
         {
             "name": "train Cube R-CNN weak loss",

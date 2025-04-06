@@ -2,7 +2,7 @@ import random
 import torch
 import numpy as np
 
-class Plane:
+class Plane_torch:
     """
     Implementation of planar RANSAC.
 

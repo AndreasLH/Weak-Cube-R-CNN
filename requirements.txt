@@ -13,3 +13,8 @@ numpy
 opencv-python
 pyransac3d
 pandas
+
+# need to install these separately first
+torch
+torchvision
+torchaudio

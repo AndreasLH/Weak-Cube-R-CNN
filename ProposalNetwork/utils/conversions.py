@@ -47,33 +47,4 @@ def cubes_to_box(cubes, K, im_shape):
 
     return box_list
 
-def pixel_to_normalised_space(pixel_coord, im_shape, norm_shape):
-    '''
-    pixel_coord: List of length N
-    im_shape: List of length N
-    norm_shape: List of length N
-    '''
-    pixel_coord = torch.stack(pixel_coord,dim=1)
-
-    new_coords = pixel_coord.to(torch.float32)
-
-    for i in range(pixel_coord.size(1)):
-        old_dim = im_shape[i]
-        new_dim = norm_shape[i]
-
-        new_coords[:,i] -= 0.5 * old_dim
-        new_coords[:,i] *= new_dim / old_dim
-    
-    return new_coords # TODO feel like its missing a line, something if normshape is not 2. Where did we take inspiration from? A library?
-
-def normalised_space_to_pixel(coords, im_shape, norm_shape):
-    new_coords = np.array(coords).astype(np.float32)
-
-    for i in range(len(new_coords)):
-        new_dim = im_shape[i]
-        old_dim = norm_shape[i]
-        new_coords[i] *= new_dim / old_dim
-        new_coords[i] += 0.5 * new_dim
-
-    return new_coords
     

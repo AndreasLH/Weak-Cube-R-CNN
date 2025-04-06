@@ -1,8 +1,13 @@
-# Weak supervised 3D Object Detection
+# Weak Cube R-CNN: Weakly Supervised 3D Object Detection using only 2D Bounding Box Annotations
 Based on the Omni3D dataset & Cube R-CNN model 
 [[`Project Page`](https://garrickbrazil.com/omni3d)] [[`arXiv`](https://arxiv.org/abs/2207.10660)] [[`BibTeX`](#citing)]
 
-This is the code accompanying our thesis which focuses on weakly-supervised 3D object detection, extinguishing the need for such data. By specifically investigating monocular methods, we leverage the high accessibility of single-camera systems over costly LiDAR sensors or complex multi-camera setups. We create three methods using 2D box annotations: A **proposal-and-scoring method**, a **pseudo-ground-truth method**, and a **weak Cube R-CNN**. The proposal method generates 1000 cubes per object and scores them. The prediction of this method is used as a pseudo ground truth in the [[`Cube R-CNN framework`](https://garrickbrazil.com/omni3d)]. To create a weak Cube RCNN, we modify the framework by replacing its 3D loss functions with ones based solely on 2D annotations. Our methods rely heavily on external, strong generalised deep learning models to infer spatial information in scenes. Experimental results show that all models perform comparably to an annotation time-equalised Cube R-CNN, whereof the pseudo ground truth method achieves the highest accuracy. The results show the methods’ ability to understand scenes in 3D, providing satisfactory visual results. Although not precise enough for centimetre accurate measurements, the methods provide a solid foundation for further research.
+## Abstract 
+> Monocular 3D object detection is an essential task in computer vision, and it has several applications in robotics and virtual reality. However, 3D object detectors are typically trained in a fully supervised way, relying extensively on 3D labeled data, which is labor-intensive and costly to annotate. This work focuses on weakly-supervised 3D detection to reduce data needs using a monocular method that leverages a single-camera system over expensive LiDAR sensors or multi-camera setups. We propose a general model Weak Cube R-CNN, which can predict objects in 3D at inference time, requiring only 2D box annotations for training by exploiting the relationship between 2D projections of 3D cubes.
+Our proposed method utilizes pre-trained frozen foundation 2D models to estimate depth and orientation information on a training set. We use these estimated values as pseudo-ground truths during training. We design loss functions that avoid 3D labels by incorporating information from the external models into the loss. In this way, we aim to implicitly transfer knowledge from these large foundation 2D models without having access to 3D bounding box annotations.  
+Experimental results on the SUN RGB-D dataset show increased performance in accuracy compared to an annotation time equalized Cube R-CNN omni3d baseline. While not precise for centimetre-level measurements, this method provides a strong foundation for further research.
+
+Download the model on [**HuggingFace 🤗**](https://huggingface.co/AndreasLH/Weak-Cube-R-CNN) 
 
 A **HuggingFace 🤗 demo** is now [live](https://huggingface.co/spaces/AndreasLH/Weakly-Supervised-3DOD) 
 
@@ -18,37 +23,7 @@ We interpret the depth maps as point clouds like the one below. This enables us 
 </p>
 
 # Example results
-<table style="border-collapse: collapse; border: none;">
-<tr>
-	<td width="60%">
-		<p align="center">
-			Proposal method
-			<img src=".github/proposal.jpg" alt=""/ height=>
-		</p>
-	</td>
-	<td width="35%">
-		<p align="center">
-			Top view
-			<img src=".github/proposal2.jpg" alt="COCO demo"/ height=>
-		</p>
-	</td>
-</tr>
-</table>
-<table style="border-collapse: collapse; border: none;">
-<tr>
-	<td width="60%">
-		<p align="center">
-			Pseudo ground truth method
-			<img src=".github/pseudo.jpg" alt=""/ height=>
-		</p>
-	</td>
-	<td width="35%">
-		<p align="center">
-			Top view
-			<img src=".github/pseudo2.jpg" alt="COCO demo"/ height=>
-		</p>
-	</td>
-</tr>
+
 </table>
 <table style="border-collapse: collapse; border: none;">
 <tr>
@@ -100,13 +75,10 @@ We interpret the depth maps as point clouds like the one below. This enables us 
 </table>
 
 
-# Updated results
-We found some weird inconsistencies in our testing, namely the postprocessing of the 2D box predictions was missing for the proposal method. After rerunning the models, the results are as follows.
+# Results
 
 | | **AP2D**    | **AP3D**    | **AP3D@15** | **AP3D@25**   | **AP3D@50**   |
 |-----|----:|----:|----:|----:|----:|
-| Proposal method | 8.26 | 5.68 | 9.31  | 5.37 | 0.24 |
-| Pseudo GT | 10.23 | **6.47** | **10.83** | **6.74** | 0.37 |
 | Weak Cube R-CNN | **12.62** | 4.88 | 8.44 | 3.77 | 0.06 |
 | Time-equalised Cube R-CNN | 3.89 | 3.27 | 5.30 | 3.28 | **0.39** |
 | Cube R-CNN | 16.51 | 15.08 | 21.34   | 16.2   | 4.56 |
@@ -124,20 +96,20 @@ Main dependencies
 - PyTorch3D
 - COCO
   
-To get all submodules
+Rememmber to get all submodules
 ```sh
 # to get the submodules
 git submodule update --init
-# to get the segmentation method
-./download_segment_anything.sh
-cd segment-anything
-pip install -e .
-cd ..
-# to get the depth model
-cd depth
-./download_models.sh
-cd ..
 ```
+
+download all external models by running 
+```sh
+# to get models, including those trained by us
+./download_models.sh
+```
+
+next, download the dataset as described in `DATA.md`.
+
 
 We found it to be a bit finicky to compile Pytorc3D, so we would advise to pick a python version which has a prebuilt pytorch3D available (check their github). Otherwise this worked for us. We Use python 3.10 because then you wont have to build pytorch3d from source, which apparently does not work on the hpc
 Detectron2. First install pytorch, load a corresponding cuda version that matches (check with a python torch.__version__, I used 12.1.1), then load a recent gcc version (>12.3)
@@ -179,17 +151,16 @@ To run the Cube R-CNN demo on a folder of input images using our `DLA34` model t
 # Download example COCO images
 sh demo/download_demo_COCO_images.sh
 
-# Run an example demo
+# Run an demo on our model
 python demo/demo.py \
---config-file cubercnn://omni3d/cubercnn_DLA34_FPN.yaml \
+--config-file configs/Omni_combined.yaml \
 --input-folder "datasets/coco_examples" \
 --threshold 0.25 --display \
-MODEL.WEIGHTS cubercnn://omni3d/cubercnn_DLA34_FPN.pth \
+MODEL.WEIGHTS output/weak_cube_r-cnn/model_final.pth \
 OUTPUT_DIR output/demo 
 ```
-locally on the HPC we found some problems with the FVCORE_CACHE, setting it manually resolves these issues.
 ```bash
-export FVCORE_CACHE='/work3/s194235'
+# Run an example of cube rcnn (baseline)
 python demo/demo.py \
 --config-file cubercnn://omni3d/cubercnn_DLA34_FPN.yaml \
 --input-folder "datasets/coco_examples" \
@@ -200,10 +171,35 @@ OUTPUT_DIR output/demo
 
 See [`demo.py`](demo/demo.py) for more details. For example, if you know the camera intrinsics you may input them as arguments with the convention `--focal-length <float>` and `--principal-point <float> <float>`. See our [`MODEL_ZOO.md`](MODEL_ZOO.md) for more model checkpoints. 
 
+## Training
+In order to train the model successfully, some prerequisites are necessary.
+
+1. Downloaded external models and data
+2. Run cubercnn/data/generate_depth_maps.py
+3. Run cubercnn/data/generate_ground_segmentations.py
+4. Run the model in 2D-only mode first, until it is converged. (do this by setting LOSS_W_3D: 0.0 in the config file)
+5. now you are ready to run the below
+
+take a look at `submit.sh`
+```bash
+python tools/train_net.py \
+    --resume \
+    --config-file configs/Omni_combined.yaml \
+    OUTPUT_DIR output/weak_cube-rcnn \
+    log True \
+    loss_functions "['iou', 'z_pseudo_gt_center', 'pose_alignment', 'pose_ground']" \
+    MODEL.WEIGHTS output/omni3d-2d-only/model_final.pth \
+    MODEL.ROI_CUBE_HEAD.LOSS_W_IOU 4.0 \
+    MODEL.ROI_CUBE_HEAD.LOSS_W_NORMAL_VEC 40.0 \
+    MODEL.ROI_CUBE_HEAD.LOSS_W_Z 100.0 \
+    MODEL.ROI_CUBE_HEAD.LOSS_W_DIMS 0.1 \
+    MODEL.ROI_CUBE_HEAD.LOSS_W_POSE 4.0 \
+```
+
 ## Omni3D Data <a name="data"></a>
 See [`DATA.md`](DATA.md) for instructions on how to download and set up images and annotations for training and evaluating Cube R-CNN. We only used the SUNRGBD dataset, but it is very easy to extend to other datasets listed in the datasets folder.
 
-## Training Cube R-CNN on Omni3D <a name="training"></a>
+## (Excerpt from Omni3D on Training Cube R-CNN on Omni3D) <a name="training"></a>
 
 We provide config files for trainin Cube R-CNN on
 * Omni3D: [`configs/Base_Omni3D.yaml`](configs/Base_Omni3D.yaml)
