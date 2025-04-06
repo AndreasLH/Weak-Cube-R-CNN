@@ -1,15 +1,11 @@
 # Weak Cube R-CNN: Weakly Supervised 3D Object Detection using only 2D Bounding Box Annotations
 
-Check out the [[`Project Page`](https://andreaslh.github.io/Weak-Cube-R-CNN-project-page/)]
+Check out the [[**Project Page**](https://andreaslh.github.io/Weak-Cube-R-CNN-project-page/)] [[**HuggingFace 🤗 demo**](https://huggingface.co/spaces/AndreasLH/Weakly-Supervised-3DOD)], Download the model on [**HuggingFace 🤗**](https://huggingface.co/AndreasLH/Weak-Cube-R-CNN), 
 
 ## Abstract 
 > Monocular 3D object detection is an essential task in computer vision, and it has several applications in robotics and virtual reality. However, 3D object detectors are typically trained in a fully supervised way, relying extensively on 3D labeled data, which is labor-intensive and costly to annotate. This work focuses on weakly-supervised 3D detection to reduce data needs using a monocular method that leverages a single-camera system over expensive LiDAR sensors or multi-camera setups. We propose a general model Weak Cube R-CNN, which can predict objects in 3D at inference time, requiring only 2D box annotations for training by exploiting the relationship between 2D projections of 3D cubes. Our proposed method utilizes pre-trained frozen foundation 2D models to estimate depth and orientation information on a training set. We use these estimated values as pseudo-ground truths during training. We design loss functions that avoid 3D labels by incorporating information from the external models into the loss. In this way, we aim to implicitly transfer knowledge from these large foundation 2D models without having access to 3D bounding box annotations. Experimental results on the SUN RGB-D dataset show increased performance in accuracy compared to an annotation time equalized Cube R-CNN omni3d baseline. While not precise for centimetre-level measurements, this method provides a strong foundation for further research.
 
 (Based on the Omni3D dataset & Cube R-CNN model [[`Project Page`](https://garrickbrazil.com/omni3d)] [[`arXiv`](https://arxiv.org/abs/2207.10660)] [[`BibTeX`](#citing)])
-
-Download the model on [**HuggingFace 🤗**](https://huggingface.co/AndreasLH/Weak-Cube-R-CNN) 
-
-A **HuggingFace 🤗 demo** is now [live](https://huggingface.co/spaces/AndreasLH/Weakly-Supervised-3DOD) 
 
 # Brief outline of method
 We use rely heavily on the [Depth Anything]([github.com/](https://github.com/LiheYoung/Depth-Anything)) for processing the depth of images. An example of which can be seen below. 
