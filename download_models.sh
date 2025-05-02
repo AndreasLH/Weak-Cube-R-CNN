@@ -17,6 +17,6 @@ cd ..
 mkdir output
 mkdir output/Baseline_sgd
 mkdir output/weak_cube_r-cnn
-wget https://huggingface.co/AndreasLH/Weak-Cube-R-CNN/blob/main/Baseline_sgd/model_final.pth -O output/Baseline_sgd/model_final.pth
+wget https://huggingface.co/AndreasLH/Weak-Cube-R-CNN/resolve/main/Baseline_sgd/model_final.pth?download=true -O output/weak_cube_r-cnn/model_final.pth
 
-wget https://huggingface.co/AndreasLH/Weak-Cube-R-CNN/blob/main/weak%20cube%20r-cnn/model_final.pth -O output/weak_cube_r-cnn/model_final.pth
+wget https://huggingface.co/AndreasLH/Weak-Cube-R-CNN/resolve/main/weak%20cube%20r-cnn/model_final.pth?download=true -O output/weak_cube_r-cnn/model_final.pth
