@@ -195,3 +195,7 @@ class CubeHead(nn.Module):
             box_z = box_z.view(n, self.num_classes, -1)
             
         return box_2d_deltas, box_z, box_dims, box_pose, box_uncert
+
+def build_cube_head(cfg, input_shape: Dict[str, ShapeSpec]):
+    name = cfg.MODEL.ROI_CUBE_HEAD.NAME
+    return ROI_CUBE_HEAD_REGISTRY.get(name)(cfg, input_shape)
